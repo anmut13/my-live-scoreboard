@@ -31,14 +31,16 @@ import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'htt
 import {getDatabase,ref,onValue,set,update,remove} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 // 1) Replace these values with your Firebase project's Web App configuration.
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIza...",
+  apiKey: "AIzaSyAZj8YDsN60dXXWqwf7crh1q66B7NlYSkY",
   authDomain: "arsenal-fans-live.firebaseapp.com",
-  databaseURL: "https://arsenal-fans-live-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL: "https://arsenal-fans-live-default-rtdb.firebaseio.com",
   projectId: "arsenal-fans-live",
   storageBucket: "arsenal-fans-live.firebasestorage.app",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
+  messagingSenderId: "751029894045",
+  appId: "1:751029894045:web:68744f98f15b3c2e708d74",
+  measurementId: "G-G7QNWYDSVZ"
 };
 const configured=!firebaseConfig.apiKey.startsWith('YOUR_')&&!firebaseConfig.databaseURL.includes('YOUR_PROJECT');
 const params=new URLSearchParams(location.search);const isOverlay=params.get('overlay')==='1';
