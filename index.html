@@ -1,439 +1,87 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arsenal Fans Live</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101014">
+<title>Arsenal Fans Live | Match Control</title>
 <style>
-:root {
-  --red:#e31b23;
-  --dark:#101116;
-  --panel:#1b1d25;
-  --white:#fff;
-}
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:transparent;
-  color:var(--white);
-  font-family:Arial,sans-serif;
-}
-#overlay {
-  max-width:1050px;
-  margin:25px auto;
-  overflow:hidden;
-  border:1px solid #555;
-  border-radius:15px;
-  background:linear-gradient(110deg,#15151c,#29232a,#15151c);
-  box-shadow:0 12px 35px #0008;
-}
-.brand {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  padding:12px;
-  background:linear-gradient(90deg,#850b13,var(--red),#850b13);
-  font-weight:900;
-  letter-spacing:2px;
-}
-.shield {
-  width:35px;height:39px;
-  display:grid;place-items:center;
-  background:white;color:#b20f19;
-  clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%);
-  font-weight:900;
-}
-.competition {
-  text-align:center;
-  padding:10px;
-  color:#ddd;
-  font-size:12px;
-  letter-spacing:2px;
-}
-.match {
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:15px;
-  padding:25px 15px;
-}
-.team {text-align:center;min-width:0}
-.team-name {
-  font-size:clamp(18px,4vw,36px);
-  font-weight:900;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.score {
-  display:flex;
-  gap:16px;
-  align-items:center;
-  justify-content:center;
-  font-size:clamp(45px,9vw,85px);
-  font-weight:900;
-  font-variant-numeric:tabular-nums;
-}
-.score span {transition:transform .25s}
-.score .changed {animation:pop .45s}
-@keyframes pop {
-  50% {transform:scale(1.3);color:#ff4545}
-}
-.center {text-align:center;min-width:100px}
-.clock {
-  font-size:25px;
-  font-weight:900;
-  font-variant-numeric:tabular-nums;
-}
-.period {
-  margin-top:8px;
-  display:inline-block;
-  padding:6px 12px;
-  border-radius:5px;
-  background:var(--red);
-  font-size:11px;
-  font-weight:900;
-}
-.bottom {
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:10px 15px;
-  background:#ffffff12;
-  font-size:11px;
-  letter-spacing:1px;
-}
-.dot {
-  display:inline-block;
-  width:8px;height:8px;
-  border-radius:50%;
-  background:#ff3333;
-  margin-right:6px;
-  animation:blink 1s infinite;
-}
-@keyframes blink {50%{opacity:.2}}
-.events {
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  flex-wrap:wrap;
-  padding:10px;
-  font-size:12px;
-  color:#ddd;
-}
-#admin {
-  max-width:760px;
-  margin:25px auto;
-  padding:20px;
-  border-radius:12px;
-  background:white;
-  color:#171717;
-}
-#admin h2 {margin-top:0}
-.grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-label {font-size:12px;font-weight:bold}
-input,select,button {
-  width:100%;
-  padding:11px;
-  margin-top:5px;
-  border:1px solid #ccc;
-  border-radius:6px;
-  font:inherit;
-}
-button {
-  background:var(--red);
-  color:white;
-  border:0;
-  font-weight:bold;
-  cursor:pointer;
-}
-button.dark {background:#242630}
-.buttons {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:9px;
-  margin-top:12px;
-}
-.hidden {display:none!important}
-#message {font-size:13px;color:#555;margin-top:10px}
-@media(max-width:500px) {
-  .match {gap:5px;padding:18px 6px}
-  .center {min-width:75px}
-  .score {gap:7px}
-  .grid {grid-template-columns:1fr 1fr}
-}
-body.overlay #admin {display:none}
-body.overlay #overlay {margin:0;width:100%;border-radius:10px}
+:root{--bg:#0c0c10;--panel:#17171e;--panel2:#20202a;--line:#30303b;--red:#ef233c;--red2:#b80f2d;--white:#f7f7fa;--muted:#a7a7b5;--green:#35c98a;--yellow:#f4c542;--blue:#60a5fa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font:14px/1.45 Inter,system-ui,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:10px 13px;font-weight:750;background:var(--red);color:#fff}button:hover{filter:brightness(1.1)}button.secondary{background:#30303b}button.good{background:#147c58}button.warn{background:#9b6b10}button.danger{background:#8d1a2b}input,select,textarea{width:100%;background:#101016;border:1px solid var(--line);border-radius:8px;color:#fff;padding:10px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--red)}label{display:block;color:var(--muted);font-size:12px;font-weight:700;margin:0 0 5px}.field{min-width:0}.grid{display:grid;gap:12px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.shell{max-width:1500px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:48px;background:linear-gradient(150deg,#f33,#a00);clip-path:polygon(50% 0,95% 12%,90% 72%,50% 100%,10% 72%,5% 12%);display:grid;place-items:center;font-weight:1000;font-size:15px}.brand h1{font-size:17px;margin:0;letter-spacing:.08em}.brand small{color:var(--muted)}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:12px;margin-bottom:12px}.tab{white-space:nowrap;background:#22222b;color:#ccc}.tab.active{background:var(--red);color:white}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}.panel h2{font-size:15px;margin:0 0 14px}.panel h3{font-size:13px;margin:0 0 10px;color:#eee}.muted{color:var(--muted)}.small{font-size:12px}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}.stack{display:grid;gap:10px}.statbox{background:#101016;border:1px solid var(--line);padding:11px;border-radius:10px}.statbox strong{font-size:22px;display:block}.pill{display:inline-flex;padding:4px 8px;border-radius:99px;background:#292933;color:#ddd;font-size:11px;font-weight:800}.pill.live{background:#4b1320;color:#ff8b9a}.hidden{display:none!important}.notice{padding:11px 13px;border-radius:9px;background:#2a2021;color:#ffd5d9;border:1px solid #63313a;margin-bottom:12px}.actions{display:flex;gap:7px;flex-wrap:wrap}.item{background:#101016;border:1px solid var(--line);padding:10px;border-radius:9px;display:flex;align-items:center;justify-content:space-between;gap:10px}.item .meta{min-width:0}.item strong{display:block}.item small{color:var(--muted)}.toggle{display:flex;align-items:center;gap:8px}.toggle input{width:auto;accent-color:var(--red)}.side-preview{position:sticky;top:12px;align-self:start}.score-preview{background:linear-gradient(120deg,#16161d,#29202a);border:1px solid #4a3038;border-radius:12px;padding:14px}.scoreline{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center;gap:10px}.scoreline .num{font-size:36px;font-weight:950}.scoreline .team{font-weight:850}.clock{font-size:13px;color:#ff9aaa;font-weight:900;letter-spacing:.1em}.event-row{font-size:12px;border-bottom:1px solid var(--line);padding:8px 0}.login{max-width:440px;margin:8vh auto;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:16px}.login h1{margin-top:0}.footer{color:#777;font-size:11px;text-align:center;padding:16px}.toast{position:fixed;bottom:18px;right:18px;background:#20202a;border:1px solid #454552;padding:12px 16px;border-radius:10px;z-index:20;box-shadow:0 10px 40px #0008}.overlay{background:transparent;overflow:hidden}.broadcast{width:min(1100px,96vw);margin:24px auto;color:white;text-shadow:0 2px 5px #0009}.scorebug{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;background:linear-gradient(90deg,#14141bed,#24242bed);border:1px solid #ffffff35;border-left:5px solid var(--red);box-shadow:0 8px 30px #0007;border-radius:8px;overflow:hidden}.ob-team{display:flex;align-items:center;gap:12px;padding:13px 18px;font-weight:900;font-size:clamp(14px,2vw,21px)}.ob-team.right{justify-content:flex-end}.ob-logo{width:38px;height:38px;object-fit:contain;border-radius:50%;background:#ffffff12}.ob-score{display:flex;align-items:center;gap:14px;padding:0 18px;background:#08080caa;font-size:clamp(24px,4vw,38px);font-weight:1000}.ob-score .dash{color:#888;font-size:20px}.ob-clock{background:var(--red);padding:5px 11px;text-align:center;font-weight:900;font-size:13px;letter-spacing:.08em}.ob-comp{text-align:center;font-size:11px;font-weight:800;letter-spacing:.12em;color:#eee;background:#111c;padding:6px}.lower{margin-top:12px;display:flex;gap:12px;align-items:flex-end}.lower-card{background:#111e;border:1px solid #ffffff30;border-radius:8px;padding:13px 16px;min-width:260px;max-width:520px;box-shadow:0 8px 25px #0007}.lower-card h3{margin:0 0 7px;color:#ff9aaa;font-size:12px;letter-spacing:.12em;text-transform:uppercase}.lower-card strong{font-size:19px}.lower-card p{margin:5px 0 0;color:#ddd}.ticker{margin-top:10px;background:#101018eF;border-left:4px solid var(--red);padding:9px 14px;font-weight:700;overflow:hidden}.stats-overlay{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stats-overlay div{background:#ffffff12;padding:7px;border-radius:5px}.stats-overlay b{float:right}.lineup{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.lineup div{font-size:12px;background:#ffffff12;padding:5px 7px;border-radius:4px}.hidden-graphic{display:none!important}.overlay .broadcast{pointer-events:none}@media(max-width:900px){.layout{grid-template-columns:1fr}.side-preview{position:static}.g4{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.shell{padding:10px}.g2,.g3{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.brand h1{font-size:14px}.scoreline .num{font-size:28px}}
 </style>
 </head>
 <body>
-
-<div id="overlay">
-  <div class="brand">
-    <div class="shield">AF</div>
-    ARSENAL FANS LIVE
-  </div>
-  <div class="competition" id="competition">INDEPENDENT FAN WATCH-ALONG</div>
-  <div class="match">
-    <div class="team">
-      <div class="team-name" id="home">ARSENAL</div>
-      <small>HOME</small>
-    </div>
-    <div class="center">
-      <div class="score">
-        <span id="hs">0</span>
-        <span>:</span>
-        <span id="as">0</span>
-      </div>
-      <div class="clock" id="clock">00:00</div>
-      <div class="period" id="period">PRE-MATCH</div>
-    </div>
-    <div class="team">
-      <div class="team-name" id="away">OPPONENT</div>
-      <small>AWAY</small>
-    </div>
-  </div>
-  <div class="events" id="events">MATCHDAY</div>
-  <div class="bottom">
-    <span><i class="dot"></i><span id="status">WATCH-ALONG</span></span>
-    <span>ARSENAL FANS LIVE</span>
-  </div>
-</div>
-
-<div id="admin">
-  <h2>⚽ Match control dashboard</h2>
-  <div id="login">
-    <p>Administrator login</p>
-    <input id="email" type="email" placeholder="Admin email">
-    <input id="password" type="password" placeholder="Password">
-    <button id="loginBtn">LOGIN</button>
-  </div>
-
-  <div id="controls" class="hidden">
-    <div class="grid">
-      <label>Competition
-        <input id="compInput" value="INDEPENDENT FAN WATCH-ALONG">
-      </label>
-      <label>Match status
-        <select id="periodInput">
-          <option>PRE-MATCH</option>
-          <option>1ST HALF</option>
-          <option>HALF-TIME</option>
-          <option>2ND HALF</option>
-          <option>EXTRA TIME</option>
-          <option>FULL-TIME</option>
-          <option>PENALTIES</option>
-        </select>
-      </label>
-      <label>Home team
-        <input id="homeInput" value="ARSENAL">
-      </label>
-      <label>Away team
-        <input id="awayInput" value="OPPONENT">
-      </label>
-      <label>Goal scorer
-        <input id="scorer" placeholder="Player name">
-      </label>
-      <label>Manual added time
-        <input id="added" placeholder="e.g. +5">
-      </label>
-    </div>
-
-    <div class="buttons">
-      <button id="homeGoal">HOME GOAL +1</button>
-      <button id="awayGoal">AWAY GOAL +1</button>
-      <button id="yellow">YELLOW CARD</button>
-      <button id="red">RED CARD</button>
-      <button id="start">START TIMER</button>
-      <button class="dark" id="pause">PAUSE TIMER</button>
-      <button class="dark" id="reset">RESET TIMER</button>
-      <button class="dark" id="undo">UNDO LAST GOAL</button>
-      <button id="save">SAVE TEAM / MATCH INFO</button>
-      <button class="dark" id="logout">LOG OUT</button>
-    </div>
-    <p id="message">Connect your Firebase project to control the scoreboard.</p>
-  </div>
-</div>
-
+<div id="loginView" class="login hidden"><div class="brand"><div class="mark">AF</div><div><h1>ARSENAL FANS LIVE</h1><small>Broadcast control room</small></div></div><h2>Admin sign in</h2><p class="muted">Only authorized admins can change live match data.</p><div class="stack"><div><label>Email</label><input id="email" type="email" autocomplete="username" placeholder="admin@example.com"></div><div><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password"></div><button id="loginBtn">Sign in to control room</button><p id="loginError" class="small" style="color:#ff8998"></p></div></div>
+<div id="loading" class="login">Connecting to the live control room…</div>
+<div id="app" class="shell hidden">
+<header class="top"><div class="brand"><div class="mark">AF</div><div><h1>ARSENAL FANS LIVE</h1><small>Manual match & broadcast control</small></div></div><div class="top-actions"><span id="connection" class="pill">Connecting…</span><button class="secondary" id="openOverlay">Open broadcast</button><button class="danger" id="logoutBtn">Sign out</button></div></header>
+<div class="notice">Manual operation: changes you save here sync to the OBS overlay through Firebase. This is an independent fan-made graphics tool; it does not provide match footage or official live data.</div>
+<nav class="tabs" id="tabs"><button class="tab active" data-tab="match">Match</button><button class="tab" data-tab="teams">Teams & players</button><button class="tab" data-tab="events">Events</button><button class="tab" data-tab="stats">Statistics</button><button class="tab" data-tab="graphics">Graphics & ticker</button><button class="tab" data-tab="lineups">Lineups</button></nav>
+<div class="layout"><main>
+<section class="tabpage" id="page-match"><div class="panel"><h2>Match information</h2><div class="grid g2"><div class="field"><label>Competition</label><input id="competition" placeholder="Premier League"></div><div class="field"><label>Venue / stadium</label><input id="venue" placeholder="Emirates Stadium"></div><div class="field"><label>Match date</label><input id="matchDate" type="date"></div><div class="field"><label>Referee</label><input id="referee" placeholder="Referee name"></div></div><div class="grid g2" style="margin-top:12px"><div><label>Home team</label><input id="homeName" placeholder="Arsenal"></div><div><label>Away team</label><input id="awayName" placeholder="Opponent"></div><div><label>Home short name</label><input id="homeShort" placeholder="ARS"></div><div><label>Away short name</label><input id="awayShort" placeholder="OPP"></div><div><label>Home logo URL (optional)</label><input id="homeLogo" placeholder="https://..."></div><div><label>Away logo URL (optional)</label><input id="awayLogo" placeholder="https://..."></div></div><div class="actions" style="margin-top:13px"><button id="saveMatch">Save match information</button></div></div>
+<div class="panel"><h2>Score & match clock</h2><div class="grid g2"><div class="statbox"><label>Home score</label><div class="row"><button class="secondary" data-score="home" data-delta="-1">−</button><strong id="homeScoreView">0</strong><button data-score="home" data-delta="1">+</button><input id="homeScore" type="number" min="0" value="0" style="max-width:80px"></div></div><div class="statbox"><label>Away score</label><div class="row"><button class="secondary" data-score="away" data-delta="-1">−</button><strong id="awayScoreView">0</strong><button data-score="away" data-delta="1">+</button><input id="awayScore" type="number" min="0" value="0" style="max-width:80px"></div></div></div><div class="grid g3" style="margin-top:12px"><div><label>Period</label><select id="period"><option>Pre-match</option><option>1st Half</option><option>Half-time</option><option>2nd Half</option><option>Extra Time 1</option><option>Extra Time 2</option><option>Half-time (ET)</option><option>Penalties</option><option>Full-time</option></select></div><div><label>Minute</label><input id="minute" type="number" min="0" max="130" value="0"></div><div><label>Added time</label><input id="addedTime" placeholder="e.g. 4"></div><div><label>Clock display</label><select id="clockMode"><option value="manual">Manual minute</option><option value="stopwatch">Running clock</option></select></div><div><label>Clock seconds</label><input id="seconds" type="number" min="0" max="59" value="0"></div><div><label>Clock status</label><select id="clockStatus"><option value="stopped">Stopped</option><option value="running">Running</option></select></div></div><div class="actions" style="margin-top:12px"><button id="startClock" class="good">Start clock</button><button id="pauseClock" class="secondary">Pause</button><button id="saveClock">Save clock</button><button id="resetClock" class="danger">Reset clock</button></div><p class="muted small">For accurate broadcast timing, set the match minute manually or use the running clock. The overlay displays the saved match clock.</p></div></section>
+<section class="tabpage hidden" id="page-teams"><div class="panel"><h2>Players & squad</h2><div class="grid g2"><div><label>Player name</label><input id="playerName" placeholder="Player name"></div><div><label>Team</label><select id="playerTeam"><option value="home">Home team</option><option value="away">Away team</option></select></div><div><label>Shirt number</label><input id="playerNumber" type="number" min="0" placeholder="7"></div><div><label>Position</label><input id="playerPosition" placeholder="Forward"></div><div><label>Player photo URL (optional)</label><input id="playerPhoto" placeholder="https://..."></div><div><label>Squad status</label><select id="playerStatus"><option>Starting XI</option><option>Substitute</option><option>Not in squad</option></select></div></div><div class="actions" style="margin-top:12px"><button id="addPlayer">Add player</button></div><div id="playersList" class="stack" style="margin-top:14px"></div></div></section>
+<section class="tabpage hidden" id="page-events"><div class="panel"><h2>Add live match event</h2><div class="grid g2"><div><label>Event type</label><select id="eventType"><option value="goal">Goal</option><option value="penalty">Penalty scored</option><option value="own-goal">Own goal</option><option value="missed-penalty">Penalty missed</option><option value="yellow">Yellow card</option><option value="red">Red card</option><option value="substitution">Substitution</option><option value="var">VAR check</option><option value="injury">Injury</option><option value="kickoff">Kick-off</option><option value="half-time">Half-time</option><option value="full-time">Full-time</option><option value="custom">Custom event</option></select></div><div><label>Team</label><select id="eventTeam"><option value="home">Home team</option><option value="away">Away team</option><option value="neutral">Both / match</option></select></div><div><label>Match minute</label><input id="eventMinute" placeholder="e.g. 34"></div><div><label>Player / main detail</label><input id="eventPlayer" placeholder="Player name"></div><div><label>Player OUT (substitution)</label><input id="playerOut" placeholder="Outgoing player"></div><div><label>Player IN (substitution)</label><input id="playerIn" placeholder="Incoming player"></div><div class="field" style="grid-column:1/-1"><label>Event description / custom text</label><input id="eventNote" placeholder="Optional details shown on broadcast"></div></div><div class="actions" style="margin-top:12px"><button id="addEvent">Publish event live</button><button id="undoEvent" class="secondary">Undo latest event</button></div><div id="eventsList" class="stack" style="margin-top:14px"></div></div></section>
+<section class="tabpage hidden" id="page-stats"><div class="panel"><h2>Live match statistics</h2><p class="muted small">Enter the numbers manually at any time. Save to publish them to the broadcast statistics graphic.</p><div id="statsFields" class="grid g2"></div><div class="actions" style="margin-top:14px"><button id="saveStats">Publish statistics</button><button id="resetStats" class="secondary">Reset statistics</button></div><div class="panel" style="margin:16px 0 0;background:#111116"><h3>Custom statistic</h3><div class="grid g3"><div><label>Statistic name</label><input id="customStatName" placeholder="Big chances"></div><div><label>Home value</label><input id="customStatHome" placeholder="3"></div><div><label>Away value</label><input id="customStatAway" placeholder="1"></div></div><button id="addCustomStat" style="margin-top:10px">Add custom statistic</button></div></div></section>
+<section class="tabpage hidden" id="page-graphics"><div class="panel"><h2>Broadcast graphic controls</h2><div id="graphicToggles" class="grid g2"></div><div class="actions" style="margin-top:14px"><button id="saveGraphics">Save graphic settings</button></div></div><div class="panel"><h2>Live ticker & announcements</h2><label>Message displayed at bottom of broadcast</label><textarea id="tickerText" rows="3" placeholder="ARSENAL FANS LIVE • Follow for match updates"></textarea><div class="grid g2" style="margin-top:10px"><div><label>Ticker speed</label><select id="tickerSpeed"><option>Normal</option><option>Fast</option><option>Slow</option></select></div><div><label>Theme colour</label><input id="accentColor" type="color" value="#ef233c"></div></div><button id="saveTicker" style="margin-top:12px">Publish ticker & theme</button></div><div class="panel"><h2>Broadcast announcements</h2><div class="grid g2"><div><label>Headline</label><input id="announceTitle" placeholder="GOAL!"></div><div><label>Details</label><input id="announceBody" placeholder="Player name • 34′"></div></div><div class="actions" style="margin-top:10px"><button id="showAnnouncement">Show announcement</button><button id="hideAnnouncement" class="secondary">Hide announcement</button></div></div></section>
+<section class="tabpage hidden" id="page-lineups"><div class="panel"><h2>Starting XI & lineup graphic</h2><p class="muted small">Players marked Starting XI are listed in the lineup panel. Add players in Teams & players.</p><div class="grid g2"><div><label>Home formation</label><input id="homeFormation" placeholder="4-3-3"></div><div><label>Away formation</label><input id="awayFormation" placeholder="4-2-3-1"></div></div><div class="actions" style="margin-top:12px"><button id="saveLineups">Save formations</button><button id="showLineups" class="good">Show lineups graphic</button><button id="hideLineups" class="secondary">Hide lineups graphic</button></div><div class="grid g2" style="margin-top:14px"><div><h3 id="homeLineupTitle">Home team</h3><div id="homeLineup" class="stack"></div></div><div><h3 id="awayLineupTitle">Away team</h3><div id="awayLineup" class="stack"></div></div></div></div></section>
+</main><aside class="side-preview"><div class="panel"><div class="row between"><h2>Live preview</h2><span class="pill live">LIVE DATA</span></div><div class="score-preview"><div class="clock" id="previewClock">PRE-MATCH</div><div class="scoreline"><div class="team" id="previewHome">ARS</div><div class="num"><span id="previewHS">0</span> : <span id="previewAS">0</span></div><div class="team" id="previewAway">OPP</div></div><div class="small muted" id="previewComp" style="text-align:center;margin-top:8px">Competition</div></div><div class="grid g2" style="margin-top:12px"><div class="statbox"><label>Events</label><strong id="eventCount">0</strong></div><div class="statbox"><label>Players</label><strong id="playerCount">0</strong></div></div><p class="muted small">This preview reflects the data stored in Firebase. Open the broadcast page to view the clean OBS graphics.</p><button id="copyOverlay" class="secondary" style="width:100%">Copy OBS overlay URL</button></div><div class="panel"><h2>Quick actions</h2><div class="stack"><button id="publishAll">Save all current changes</button><button id="clearMatch" class="danger">Clear / reset match data</button></div><p class="muted small">Reset is permanent. Use only before a new match.</p></div></aside></div><div class="footer">ARSENAL FANS LIVE • Independent fan project • Not affiliated with Arsenal FC or the Premier League</div></div>
+<div id="toast" class="toast hidden"></div>
+<div id="overlayView" class="hidden"><div class="broadcast"><div id="obComp" class="ob-comp">COMPETITION • STADIUM</div><div class="scorebug"><div class="ob-team"><img id="obHomeLogo" class="ob-logo hidden"><span id="obHome">ARSENAL</span></div><div class="ob-score"><span id="obHS">0</span><span class="dash">:</span><span id="obAS">0</span></div><div class="ob-team right"><span id="obAway">OPPONENT</span><img id="obAwayLogo" class="ob-logo hidden"></div></div><div id="obClock" class="ob-clock">PRE-MATCH</div><div id="obLower" class="lower"><div id="obAnnouncement" class="lower-card hidden"><h3 id="obAnnTitle">GOAL!</h3><strong id="obAnnBody"></strong></div><div id="obEvent" class="lower-card hidden"><h3>Match event</h3><strong id="obEventText"></strong></div><div id="obStats" class="lower-card hidden"><h3>Match statistics</h3><div id="obStatsContent" class="stats-overlay"></div></div><div id="obLineups" class="lower-card hidden"><h3>Starting lineups</h3><div class="grid g2"><div><b id="obHomeLineupTitle">HOME</b><div id="obHomeLineup" class="lineup"></div></div><div><b id="obAwayLineupTitle">AWAY</b><div id="obAwayLineup" class="lineup"></div></div></div></div></div><div id="obTicker" class="ticker hidden"></div></div></div>
 <script type="module">
-import { initializeApp } from
- "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {getDatabase,ref,onValue,set,update,remove} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
-import {
- getAuth, signInWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
- getDatabase, ref, onValue, update, get
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-// 1. PUT YOUR FIREBASE CONFIGURATION HERE
+// 1) Replace these values with your Firebase project's Web App configuration.
 const firebaseConfig = {
- apiKey: "YOUR_API_KEY",
- authDomain: "YOUR_PROJECT.firebaseapp.com",
- databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
- projectId: "YOUR_PROJECT",
- appId: "YOUR_APP_ID"
+  apiKey: "AIza...",
+  authDomain: "arsenal-fans-live.firebaseapp.com",
+  databaseURL: "https://arsenal-fans-live-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "arsenal-fans-live",
+  storageBucket: "arsenal-fans-live.firebasestorage.app",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
 };
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-const matchRef = ref(db,"matches/arsenalfans");
-
-const $ = id => document.getElementById(id);
-const overlayMode =
- new URLSearchParams(location.search).get("overlay")==="1";
-
-if(overlayMode) document.body.classList.add("overlay");
-
-let state = {
- home:"ARSENAL", away:"OPPONENT",
- hs:0, as:0,
- competition:"INDEPENDENT FAN WATCH-ALONG",
- period:"PRE-MATCH",
- elapsed:0, startedAt:null,
- added:"", events:[]
-};
-
-function currentElapsed(s) {
- if(s.startedAt)
-  return (s.elapsed||0)+Math.max(0,Math.floor((Date.now()-s.startedAt)/1000));
- return s.elapsed||0;
-}
-
-function timeString(seconds) {
- const m=Math.floor(seconds/60);
- const sec=seconds%60;
- return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
-}
-
-function render(s) {
- $("home").textContent=s.home;
- $("away").textContent=s.away;
- $("competition").textContent=s.competition;
- $("hs").textContent=s.hs;
- $("as").textContent=s.as;
- $("clock").textContent=timeString(currentElapsed(s))+
-   (s.added ? " "+s.added : "");
- $("period").textContent=s.period;
- $("status").textContent=s.startedAt?"LIVE WATCH-ALONG":"WATCH-ALONG";
- $("events").textContent=(s.events||[]).slice(-4)
-  .map(e=>e.icon+" "+e.text).join("  •  ") || "MATCHDAY";
-}
-
-function say(message) {
- $("message").textContent=message;
-}
-
-async function change(values) {
- if(!auth.currentUser) return say("Please log in first.");
- try {
-  await update(matchRef,values);
-  say("Scoreboard updated successfully.");
- } catch(e) {
-  say("Update error: "+e.message);
- }
-}
-
-onValue(matchRef,snapshot=>{
- if(snapshot.exists()) {
-  state=snapshot.val();
-  render(state);
- }
-});
-
-setInterval(()=>render(state),500);
-
-$("loginBtn").onclick=async()=>{
- try {
-  await signInWithEmailAndPassword(
-   auth,$("email").value,$("password").value
-  );
-  $("login").classList.add("hidden");
-  $("controls").classList.remove("hidden");
-  say("Administrator connected.");
- } catch(e) {
-  say("Login failed: "+e.message);
- }
-};
-
-$("logout").onclick=async()=>{
- await signOut(auth);
- $("controls").classList.add("hidden");
- $("login").classList.remove("hidden");
-};
-
-$("save").onclick=()=>change({
- home:$("homeInput").value.toUpperCase(),
- away:$("awayInput").value.toUpperCase(),
- competition:$("compInput").value.toUpperCase(),
- period:$("periodInput").value,
- added:$("added").value
-});
-
-async function goal(team) {
- const s=state;
- const scorer=$("scorer").value.trim()||"Unknown scorer";
- const event={icon:"⚽",text:scorer+" ("+
-  timeString(currentElapsed(s))+")"};
- const events=[...(s.events||[]),event].slice(-12);
- await change({
-  [team]: (team==="hs" ? s.hs : s.as)+1,
-  events
- });
- $("scorer").value="";
-}
-
-$("homeGoal").onclick=()=>goal("hs");
-$("awayGoal").onclick=()=>goal("as");
-
-async function card(icon,label) {
- const player=$("scorer").value.trim()||"Player";
- await change({
-  events:[...(state.events||[]),
-   {icon,text:label+": "+player}].slice(-12)
- });
-}
-
-$("yellow").onclick=()=>card("🟨","Yellow card");
-$("red").onclick=()=>card("🟥","Red card");
-
-$("start").onclick=()=>change({
- period:state.period==="PRE-MATCH"?"1ST HALF":state.period,
- startedAt:Date.now()
-});
-
-$("pause").onclick=()=>change({
- elapsed:currentElapsed(state),
- startedAt:null
-});
-
-$("reset").onclick=()=>change({
- elapsed:0,startedAt:null,period:"PRE-MATCH"
-});
-
-$("undo").onclick=async()=>{
- const s=state;
- const events=[...(s.events||[])];
- const last=events.pop();
- if(!last || last.icon!=="⚽")
-  return say("Last event is not a goal.");
- // Goal events identify the scoring side by their stored team.
- const side=last.team;
- if(!side) return say("This event cannot be undone automatically.");
- await change({
-  [side]:Math.max(0,s[side]-1),
-  events
- });
-};
-
+const configured=!firebaseConfig.apiKey.startsWith('YOUR_')&&!firebaseConfig.databaseURL.includes('YOUR_PROJECT');
+const params=new URLSearchParams(location.search);const isOverlay=params.get('overlay')==='1';
+const $=id=>document.getElementById(id);const defaults={match:{competition:'Premier League',venue:'Emirates Stadium',matchDate:'',referee:'',homeName:'Arsenal',awayName:'Opponent',homeShort:'ARS',awayShort:'OPP',homeLogo:'',awayLogo:'',homeScore:0,awayScore:0,period:'Pre-match',minute:0,addedTime:'',seconds:0,clockMode:'manual',clockStatus:'stopped',clockStartedAt:0,homeFormation:'4-3-3',awayFormation:'4-2-3-1'},players:[],events:[],stats:{possessionHome:50,possessionAway:50,shotsHome:0,shotsAway:0,onTargetHome:0,onTargetAway:0,cornersHome:0,cornersAway:0,foulsHome:0,foulsAway:0,offsidesHome:0,offsidesAway:0,savesHome:0,savesAway:0,passHome:0,passAway:0},customStats:[],graphics:{scoreboard:true,event:true,stats:false,lineups:false,ticker:true,announcement:true},ticker:{text:'ARSENAL FANS LIVE • LIVE MATCH COVERAGE',speed:'Normal',accent:'#ef233c'},announcement:{title:'',body:'',visible:false}};
+let state=structuredClone(defaults),db,auth,matchRef,rootRef,unsub=null,saveTimer=null;
+const statDefs=[['Possession','possession','%'],['Shots','shots',''],['Shots on target','onTarget',''],['Corners','corners',''],['Fouls','fouls',''],['Offsides','offsides',''],['Saves','saves',''],['Pass accuracy','pass','%']];
+const graphicDefs=[['scoreboard','Scoreboard'],['event','Event notifications'],['stats','Statistics panel'],['lineups','Starting lineups'],['ticker','Bottom ticker'],['announcement','Announcements']];
+function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),2600)}
+function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function ensure(){for(const k of Object.keys(defaults)){if(state[k]===undefined)state[k]=clone(defaults[k])}state.match={...defaults.match,...(state.match||{})};state.stats={...defaults.stats,...(state.stats||{})};state.graphics={...defaults.graphics,...(state.graphics||{})};state.ticker={...defaults.ticker,...(state.ticker||{})};state.announcement={...defaults.announcement,...(state.announcement||{})};state.players=Array.isArray(state.players)?state.players:[];state.events=Array.isArray(state.events)?state.events:[];state.customStats=Array.isArray(state.customStats)?state.customStats:[]}
+function showApp(){ $('loading').classList.add('hidden');$('loginView').classList.add('hidden');$('app').classList.remove('hidden') }
+function showLogin(){ $('loading').classList.add('hidden');$('app').classList.add('hidden');$('loginView').classList.remove('hidden') }
+async function persist(){if(!db||!auth?.currentUser)return;try{await set(rootRef,state);$('connection').textContent='Firebase synced';$('connection').className='pill live'}catch(e){toast('Save failed: '+e.message)}}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(persist,350)}
+function fieldVal(id){return $(id).value}
+function fillMatch(){const m=state.match;for(const id of ['competition','venue','matchDate','referee','homeName','awayName','homeShort','awayShort','homeLogo','awayLogo','homeScore','awayScore','period','minute','addedTime','seconds','clockMode','clockStatus','homeFormation','awayFormation'])if($(id))$(id).value=m[id]??'';render()}
+function collectMatch(){const m=state.match;for(const id of ['competition','venue','matchDate','referee','homeName','awayName','homeShort','awayShort','homeLogo','awayLogo','period','addedTime','clockMode','clockStatus','homeFormation','awayFormation'])m[id]=fieldVal(id);for(const id of ['homeScore','awayScore','minute','seconds'])m[id]=Math.max(0,Number(fieldVal(id)||0));if(m.seconds>59)m.seconds=59;}
+function clockText(){const m=state.match;let minute=Number(m.minute||0),sec=Number(m.seconds||0);if(m.clockMode==='stopwatch'&&m.clockStatus==='running'&&m.clockStartedAt){const elapsed=Math.floor((Date.now()-m.clockStartedAt)/1000);minute+=Math.floor(elapsed/60);sec=elapsed%60}let text=String(minute)+(sec?':'+String(sec).padStart(2,'0'):'');if(m.addedTime)text+=' +'+m.addedTime;return m.period==='Pre-match'||m.period==='Half-time'||m.period==='Half-time (ET)'||m.period==='Full-time'||m.period==='Penalties'?m.period.toUpperCase():text+'′'}
+function render(){ensure();const m=state.match;$('homeScoreView').textContent=m.homeScore;$('awayScoreView').textContent=m.awayScore;$('previewHS').textContent=m.homeScore;$('previewAS').textContent=m.awayScore;$('previewHome').textContent=m.homeShort||m.homeName;$('previewAway').textContent=m.awayShort||m.awayName;$('previewComp').textContent=m.competition||'Competition';$('previewClock').textContent=clockText();$('eventCount').textContent=state.events.length;$('playerCount').textContent=state.players.length;
+$('playersList').innerHTML=state.players.map((p,i)=>`<div class="item"><div class="meta"><strong>${escapeHtml(p.number?('#'+p.number+' '):'')+p.name}</strong><small>${escapeHtml(p.team==='home'?m.homeName:m.awayName)} • ${escapeHtml(p.position||'')} • ${escapeHtml(p.status||'')}</small></div><button class="danger" data-del-player="${i}">Remove</button></div>`).join('')||'<p class="muted small">No players added yet.</p>';
+$('eventsList').innerHTML=state.events.slice().reverse().map((e,ri)=>{const i=state.events.length-1-ri;return `<div class="item"><div class="meta"><strong>${escapeHtml(e.icon||'•')} ${escapeHtml(e.typeLabel||e.type)} — ${escapeHtml(e.minute||'')}′</strong><small>${escapeHtml(e.team==='home'?m.homeName:e.team==='away'?m.awayName:'Match')} • ${escapeHtml(e.player||e.note||'')}</small></div><button class="danger" data-del-event="${i}">Delete</button></div>`}).join('')||'<p class="muted small">No events published.</p>';
+$('homeLineupTitle').textContent=m.homeName;$('awayLineupTitle').textContent=m.awayName;$('homeLineup').innerHTML=state.players.filter(p=>p.team==='home'&&p.status==='Starting XI').map(p=>`<div>${escapeHtml(p.number||'')} ${escapeHtml(p.name)}</div>`).join('')||'<span class="muted small">No starters</span>';$('awayLineup').innerHTML=state.players.filter(p=>p.team==='away'&&p.status==='Starting XI').map(p=>`<div>${escapeHtml(p.number||'')} ${escapeHtml(p.name)}</div>`).join('')||'<span class="muted small">No starters</span>';
+renderOverlay();}
+function renderOverlay(){const m=state.match;const setText=(id,v)=>{if($(id))$(id).textContent=v??''};setText('obComp',[m.competition,m.venue].filter(Boolean).join(' • '));setText('obHome',m.homeName);setText('obAway',m.awayName);setText('obHS',m.homeScore);setText('obAS',m.awayScore);setText('obClock',clockText());for(const [id,url] of [['obHomeLogo',m.homeLogo],['obAwayLogo',m.awayLogo]]){const el=$(id);if(url){el.src=url;el.classList.remove('hidden')}else el.classList.add('hidden')}
+$('obComp').classList.toggle('hidden',!state.graphics.scoreboard);document.querySelector('.scorebug').classList.toggle('hidden-graphic',!state.graphics.scoreboard);$('obClock').classList.toggle('hidden-graphic',!state.graphics.scoreboard);
+const last=state.events[state.events.length-1];$('obEvent').classList.toggle('hidden',!state.graphics.event||!last);setText('obEventText',last?`${last.typeLabel||last.type}: ${last.player||last.note||''} ${last.minute?last.minute+'′':''}`:'');
+$('obStats').classList.toggle('hidden',!state.graphics.stats);const statRows=statDefs.map(([label,key,suffix])=>`<div>${label}<b>${state.stats[key+'Home']??0}${suffix} – ${state.stats[key+'Away']??0}${suffix}</b></div>`).concat(state.customStats.map(s=>`<div>${escapeHtml(s.name)}<b>${escapeHtml(s.home)} – ${escapeHtml(s.away)}</b></div>`));$('obStatsContent').innerHTML=statRows.join('');
+$('obLineups').classList.toggle('hidden',!state.graphics.lineups);setText('obHomeLineupTitle',m.homeName+' • '+m.homeFormation);setText('obAwayLineupTitle',m.awayName+' • '+m.awayFormation);$('obHomeLineup').innerHTML=state.players.filter(p=>p.team==='home'&&p.status==='Starting XI').map(p=>`<div>${escapeHtml(p.number||'')} ${escapeHtml(p.name)}</div>`).join('');$('obAwayLineup').innerHTML=state.players.filter(p=>p.team==='away'&&p.status==='Starting XI').map(p=>`<div>${escapeHtml(p.number||'')} ${escapeHtml(p.name)}</div>`).join('');
+$('obTicker').textContent=state.ticker.text||'';$('obTicker').classList.toggle('hidden',!state.graphics.ticker||!state.ticker.text);$('obTicker').style.borderColor=state.ticker.accent||'#ef233c';$('obAnnouncement').classList.toggle('hidden',!state.graphics.announcement||!state.announcement.visible);setText('obAnnTitle',state.announcement.title);setText('obAnnBody',state.announcement.body);document.documentElement.style.setProperty('--red',state.ticker.accent||'#ef233c');}
+function initFields(){ $('statsFields').innerHTML=statDefs.map(([label,key,suffix])=>`<div class="statbox"><label>${label} ${suffix}</label><div class="grid g2"><div><label class="small">Home</label><input data-stat="${key}Home" type="number" min="0"></div><div><label class="small">Away</label><input data-stat="${key}Away" type="number" min="0"></div></div></div>`).join('');$('graphicToggles').innerHTML=graphicDefs.map(([key,label])=>`<label class="toggle"><input type="checkbox" data-graphic="${key}"> ${label}</label>`).join('')}
+function fillStats(){document.querySelectorAll('[data-stat]').forEach(el=>el.value=state.stats[el.dataset.stat]??0);document.querySelectorAll('[data-graphic]').forEach(el=>el.checked=!!state.graphics[el.dataset.graphic]);$('tickerText').value=state.ticker.text;$('tickerSpeed').value=state.ticker.speed;$('accentColor').value=state.ticker.accent;$('homeFormation').value=state.match.homeFormation;$('awayFormation').value=state.match.awayFormation}
+function updateScore(team,delta){const k=team==='home'?'homeScore':'awayScore';state.match[k]=Math.max(0,Number(state.match[k]||0)+delta);fillMatch();scheduleSave()}
+function eventIcon(type){return ({goal:'⚽',penalty:'⚽', 'own-goal':'⚽','missed-penalty':'✖',yellow:'🟨',red:'🟥',substitution:'🔄',var:'📺',injury:'✚',kickoff:'▶', 'half-time':'Ⅱ','full-time':'■',custom:'•'})[type]||'•'}
+function labelType(t){return ({goal:'GOAL',penalty:'PENALTY GOAL','own-goal':'OWN GOAL','missed-penalty':'PENALTY MISSED',yellow:'YELLOW CARD',red:'RED CARD',substitution:'SUBSTITUTION',var:'VAR CHECK',injury:'INJURY',kickoff:'KICK-OFF','half-time':'HALF-TIME','full-time':'FULL-TIME',custom:'MATCH UPDATE'})[t]||t}
+function publishEvent(){collectMatch();const type=fieldVal('eventType'),team=fieldVal('eventTeam'),minute=fieldVal('eventMinute')||String(state.match.minute),player=fieldVal('eventPlayer'),note=fieldVal('eventNote');const e={type,typeLabel:labelType(type),icon:eventIcon(type),team,minute,player,note,playerOut:fieldVal('playerOut'),playerIn:fieldVal('playerIn'),createdAt:Date.now()};state.events.push(e);if(['goal','penalty','own-goal'].includes(type)){const scoreTeam=type==='own-goal'?(team==='home'?'away':'home'):team;if(scoreTeam==='home'||scoreTeam==='away')state.match[scoreTeam+'Score']++ ;state.announcement={title:type==='own-goal'?'OWN GOAL!':'GOAL!',body:[player,minute?minute+'′':''].filter(Boolean).join(' • '),visible:true}}else if(type==='yellow'||type==='red'){state.announcement={title:type==='yellow'?'YELLOW CARD':'RED CARD',body:[player,minute?minute+'′':''].filter(Boolean).join(' • '),visible:true}}else if(type==='substitution'){state.announcement={title:'SUBSTITUTION',body:`IN: ${e.playerIn||'—'}  |  OUT: ${e.playerOut||'—'}`,visible:true}}$('eventPlayer').value='';$('eventNote').value='';$('playerOut').value='';$('playerIn').value='';fillMatch();render();persist();toast('Event published to broadcast')}
+function addPlayer(){const name=fieldVal('playerName').trim();if(!name)return toast('Enter a player name');state.players.push({name,team:fieldVal('playerTeam'),number:fieldVal('playerNumber'),position:fieldVal('playerPosition'),photo:fieldVal('playerPhoto'),status:fieldVal('playerStatus')});for(const id of ['playerName','playerNumber','playerPosition','playerPhoto'])$(id).value='';render();persist();toast('Player added')}
+function saveStats(){document.querySelectorAll('[data-stat]').forEach(el=>state.stats[el.dataset.stat]=Math.max(0,Number(el.value||0)));render();persist();toast('Statistics published')}
+function saveGraphics(){document.querySelectorAll('[data-graphic]').forEach(el=>state.graphics[el.dataset.graphic]=el.checked);render();persist();toast('Graphics settings saved')}
+function setup(){initFields();$('loading').classList.remove('hidden');if(!configured){$('loading').innerHTML='<b>Firebase setup required</b><p>Open this file and replace the firebaseConfig placeholders with your Firebase Web App settings. Then reload.</p>';return}const app=initializeApp(firebaseConfig);db=getDatabase(app);rootRef=ref(db,'matches/current');matchRef=rootRef;if(isOverlay){$('loading').classList.add('hidden');$('overlayView').classList.remove('hidden');document.body.classList.add('overlay');onValue(rootRef,snap=>{if(snap.exists()){state=snap.val();ensure();renderOverlay()}else{state=clone(defaults);ensure();renderOverlay()}});return}auth=getAuth(app);onAuthStateChanged(auth,user=>{if(user){showApp();if(unsub)unsub();unsub=onValue(rootRef,snap=>{const data=snap.val();if(data){state=data;ensure();fillMatch();fillStats();render()}else{state=clone(defaults);ensure();fillMatch();fillStats();persist()}$('connection').textContent='Live connected';$('connection').className='pill live'})}else showLogin()});}
+$('loginBtn').addEventListener('click',async()=>{try{await signInWithEmailAndPassword(auth,fieldVal('email'),fieldVal('password'));$('loginError').textContent=''}catch(e){$('loginError').textContent=e.message}});$('logoutBtn').onclick=()=>signOut(auth);$('openOverlay').onclick=()=>window.open(location.pathname+'?overlay=1','_blank');$('copyOverlay').onclick=async()=>{await navigator.clipboard.writeText(location.href.split('?')[0]+'?overlay=1');toast('OBS overlay URL copied')};
+$('tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(!b)return;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tabpage').forEach(x=>x.classList.toggle('hidden',x.id!=='page-'+b.dataset.tab))};
+document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>updateScore(b.dataset.score,Number(b.dataset.delta)));$('homeScore').onchange=()=>{state.match.homeScore=Math.max(0,Number(fieldVal('homeScore')));render();scheduleSave()};$('awayScore').onchange=()=>{state.match.awayScore=Math.max(0,Number(fieldVal('awayScore')));render();scheduleSave()};$('saveMatch').onclick=()=>{collectMatch();render();persist();toast('Match information saved')};$('saveClock').onclick=()=>{collectMatch();if(state.match.clockStatus==='running')state.match.clockStartedAt=Date.now();render();persist();toast('Clock saved')};$('startClock').onclick=()=>{collectMatch();state.match.clockMode='stopwatch';state.match.clockStatus='running';state.match.clockStartedAt=Date.now();$('clockMode').value='stopwatch';$('clockStatus').value='running';persist();toast('Clock started')};$('pauseClock').onclick=()=>{if(state.match.clockMode==='stopwatch'&&state.match.clockStatus==='running'){const elapsed=Math.floor((Date.now()-state.match.clockStartedAt)/1000);state.match.minute+=Math.floor(elapsed/60);state.match.seconds=elapsed%60}state.match.clockStatus='stopped';$('clockStatus').value='stopped';fillMatch();persist();toast('Clock paused')};$('resetClock').onclick=()=>{state.match.minute=0;state.match.seconds=0;state.match.addedTime='';state.match.clockStatus='stopped';state.match.clockStartedAt=0;fillMatch();persist()};$('addPlayer').onclick=addPlayer;$('playersList').onclick=e=>{const b=e.target.closest('[data-del-player]');if(b){state.players.splice(Number(b.dataset.delPlayer),1);render();persist()}};$('addEvent').onclick=publishEvent;$('undoEvent').onclick=()=>{if(!state.events.length)return toast('No events to undo');const e=state.events.pop();if(['goal','penalty','own-goal'].includes(e.type)){const team=e.type==='own-goal'?(e.team==='home'?'away':'home'):e.team;if(team==='home'||team==='away')state.match[team+'Score']=Math.max(0,state.match[team+'Score']-1)}state.announcement.visible=false;fillMatch();render();persist();toast('Last event undone')};$('eventsList').onclick=e=>{const b=e.target.closest('[data-del-event]');if(b){state.events.splice(Number(b.dataset.delEvent),1);render();persist()}};$('saveStats').onclick=saveStats;$('resetStats').onclick=()=>{state.stats=clone(defaults.stats);fillStats();render();persist()};$('addCustomStat').onclick=()=>{const name=fieldVal('customStatName').trim();if(!name)return toast('Enter a statistic name');state.customStats.push({name,home:fieldVal('customStatHome')||'0',away:fieldVal('customStatAway')||'0'});$('customStatName').value='';$('customStatHome').value='';$('customStatAway').value='';render();persist()};$('saveGraphics').onclick=saveGraphics;$('saveTicker').onclick=()=>{state.ticker={text:fieldVal('tickerText'),speed:fieldVal('tickerSpeed'),accent:fieldVal('accentColor')};render();persist();toast('Ticker published')};$('showAnnouncement').onclick=()=>{state.announcement={title:fieldVal('announceTitle'),body:fieldVal('announceBody'),visible:true};render();persist()};$('hideAnnouncement').onclick=()=>{state.announcement.visible=false;render();persist()};$('saveLineups').onclick=()=>{state.match.homeFormation=fieldVal('homeFormation');state.match.awayFormation=fieldVal('awayFormation');persist();render();toast('Formations saved')};$('showLineups').onclick=()=>{state.graphics.lineups=true;fillStats();render();persist()};$('hideLineups').onclick=()=>{state.graphics.lineups=false;fillStats();render();persist()};$('publishAll').onclick=()=>{collectMatch();saveStats();saveGraphics();state.ticker={text:fieldVal('tickerText'),speed:fieldVal('tickerSpeed'),accent:fieldVal('accentColor')};persist();toast('All current settings published')};$('clearMatch').onclick=async()=>{if(!confirm('Clear all match details, players, events and stats? This cannot be undone.'))return;state=clone(defaults);ensure();fillMatch();fillStats();render();await persist();toast('Match reset')};
+setup();setInterval(()=>{if(!isOverlay&&state.match.clockMode==='stopwatch'&&state.match.clockStatus==='running'){$('previewClock').textContent=clockText()}if(isOverlay&&state.match.clockMode==='stopwatch'&&state.match.clockStatus==='running')$('obClock').textContent=clockText()},500);
 </script>
-</body>
-</html>
+</body></html>
