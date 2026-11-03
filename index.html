@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Live Sports Analytics Dashboard</title>
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #131c2e;
+            --bg-dark: #070a10;
+            --accent-blue: #2563eb;
+            --accent-green: #10b981;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --live-red: #ef4444;
+            --border: #1e293b;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 3fr 2fr;
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+        }
+
+        /* Scoreboard Display Component */
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-dark), #0f172a);
+            padding: 20px 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--live-red);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--live-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--live-red);
+        }
+
+        .live-dot.paused {
+            background-color: var(--text-secondary);
+            box-shadow: none;
+        }
+
+        .clock-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-secondary);
+        }
+
+        .team-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 35%;
+        }
+
+        .team-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .score-box {
+            font-size: 4rem;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            width: 30%;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Statistics Bars Component */
+        .stat-row {
+            margin-bottom: 18px;
+        }
+
+        .stat-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .stat-bar-container {
+            display: flex;
+            height: 8px;
+            background-color: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stat-bar-left {
+            background-color: var(--accent-blue);
+            transition: width 0.4s ease;
+            width: 50%;
+        }
+
+        .stat-bar-right {
+            background-color: var(--accent-green);
+            transition: width 0.4s ease;
+            width: 50%;
+        }
+
+        /* Live Event Log */
+        .event-log {
+            height: 180px;
+            overflow-y: auto;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .event-item {
+            padding: 6px 0;
+            border-bottom: 1px solid #1e293b;
+            color: var(--text-secondary);
+        }
+
+        .event-time {
+            color: var(--accent-blue);
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        /* Control Panels */
+        .panel-heading {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .ctrl-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn:hover { filter: brightness(1.1); }
+        .btn-green { background-color: var(--accent-green); }
+        .btn-slate { background-color: #475569; }
+
+        input, select {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-grid">
+        
+        <!-- Scoreboard Panel -->
+        <div class="card full-width scoreboard">
+            <div class="team-node">
+                <div class="team-title" id="t1Name">HOME</div>
+                <div style="font-size:0.8rem; color:var(--accent-blue); font-weight:700;">Home Team</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="live-indicator" id="liveIndicator">
+                    <div class="live-dot" id="liveDot"></div>
+                    <span id="liveStatusText">LIVE</span>
+                </div>
+                <div class="score-box">
+                    <span id="t1Score">0</span><span>-</span><span id="t2Score">0</span>
+                </div>
+                <div class="clock-display" id="clock">00:00</div>
+            </div>
+
+            <div class="team-node">
+                <div class="team-title" id="t2Name">AWAY</div>
+                <div style="font-size:0.8rem; color:var(--accent-green); font-weight:700;">Away Team</div>
+            </div>
+        </div>
+
+        <!-- Live Statistics Comparison Display -->
+        <div class="card">
+            <div class="panel-heading">Live Dynamic Statistics</div>
+            
+            <!-- Possession Metric -->
+            <div class="stat-row">
+                <div class="stat-labels">
+                    <span id="v1Poss">50%</span><span>Ball Possession</span><span id="v2Poss">50%</span>
+                </div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-left" id="barPoss" style="width: 50%;"></div>
+                    <div class="stat-bar-right" id="barPoss2" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <!-- Shots on Target Metric -->
+            <div class="stat-row">
+                <div class="stat-labels">
+                    <span id="v1Shots">0</span><span>Shots (On Target)</span><span id="v2Shots">0</span>
+                </div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-left" id="barShots" style="width: 50%;"></div>
+                    <div class="stat-bar-right" id="barShots2" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <!-- Passing Ratios -->
+            <div class="stat-row">
+                <div class="stat-labels">
+                    <span id="v1Pass">0/0</span><span>Pass Accuracy</span><span id="v2Pass">0/0</span>
+                </div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-left" id="barPass" style="width: 50%;"></div>
+                    <div class="stat-bar-right" id="barPass2" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <!-- Fouls & Disciplinary Metric -->
+            <div class="stat-row">
+                <div class="stat-labels">
+                    <span id="v1Fouls">0</span><span>Fouls Committed</span><span id="v2Fouls">0</span>
+                </div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-left" id="barFouls" style="width: 50%;"></div>
+                    <div class="stat-bar-right" id="barFouls2" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <div class="panel-heading" style="margin-top:24px;">Live Match Feed</div>
+            <div class="event-log" id="eventLog">
+                <div class="event-item"><span class="event-time">00:00</span>Match configuration generated cleanly. Ready to start.</div>
+            </div>
+        </div>
+
+        <!-- System Operator Panel -->
+        <div class="card">
+            <div class="panel-heading">Operator Real-time Controller</div>
+            
