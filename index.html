@@ -1,318 +1,439 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Live Sports Analytics Dashboard</title>
-    <style>
-        :root {
-            --bg-main: #0b0f19;
-            --bg-card: #131c2e;
-            --bg-dark: #070a10;
-            --accent-blue: #2563eb;
-            --accent-green: #10b981;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --live-red: #ef4444;
-            --border: #1e293b;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        @media (min-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 3fr 2fr;
-            }
-            .full-width {
-                grid-column: span 2;
-            }
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border);
-        }
-
-        /* Scoreboard Display Component */
-        .scoreboard {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, var(--bg-dark), #0f172a);
-            padding: 20px 40px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--live-red);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--live-red);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--live-red);
-        }
-
-        .live-dot.paused {
-            background-color: var(--text-secondary);
-            box-shadow: none;
-        }
-
-        .clock-display {
-            font-size: 1.5rem;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            color: var(--text-secondary);
-        }
-
-        .team-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 35%;
-        }
-
-        .team-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            text-align: center;
-        }
-
-        .score-box {
-            font-size: 4rem;
-            font-weight: 900;
-            font-variant-numeric: tabular-nums;
-            width: 30%;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        /* Statistics Bars Component */
-        .stat-row {
-            margin-bottom: 18px;
-        }
-
-        .stat-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .stat-bar-container {
-            display: flex;
-            height: 8px;
-            background-color: var(--bg-dark);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .stat-bar-left {
-            background-color: var(--accent-blue);
-            transition: width 0.4s ease;
-            width: 50%;
-        }
-
-        .stat-bar-right {
-            background-color: var(--accent-green);
-            transition: width 0.4s ease;
-            width: 50%;
-        }
-
-        /* Live Event Log */
-        .event-log {
-            height: 180px;
-            overflow-y: auto;
-            background: var(--bg-dark);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border);
-        }
-
-        .event-item {
-            padding: 6px 0;
-            border-bottom: 1px solid #1e293b;
-            color: var(--text-secondary);
-        }
-
-        .event-time {
-            color: var(--accent-blue);
-            font-weight: bold;
-            margin-right: 6px;
-        }
-
-        /* Control Panels */
-        .panel-heading {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 6px;
-            font-weight: 700;
-        }
-
-        .ctrl-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .btn {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .btn:hover { filter: brightness(1.1); }
-        .btn-green { background-color: var(--accent-green); }
-        .btn-slate { background-color: #475569; }
-
-        input, select {
-            background-color: var(--bg-dark);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 4px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arsenal Fans Live</title>
+<style>
+:root {
+  --red:#e31b23;
+  --dark:#101116;
+  --panel:#1b1d25;
+  --white:#fff;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:transparent;
+  color:var(--white);
+  font-family:Arial,sans-serif;
+}
+#overlay {
+  max-width:1050px;
+  margin:25px auto;
+  overflow:hidden;
+  border:1px solid #555;
+  border-radius:15px;
+  background:linear-gradient(110deg,#15151c,#29232a,#15151c);
+  box-shadow:0 12px 35px #0008;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px;
+  background:linear-gradient(90deg,#850b13,var(--red),#850b13);
+  font-weight:900;
+  letter-spacing:2px;
+}
+.shield {
+  width:35px;height:39px;
+  display:grid;place-items:center;
+  background:white;color:#b20f19;
+  clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%);
+  font-weight:900;
+}
+.competition {
+  text-align:center;
+  padding:10px;
+  color:#ddd;
+  font-size:12px;
+  letter-spacing:2px;
+}
+.match {
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:15px;
+  padding:25px 15px;
+}
+.team {text-align:center;min-width:0}
+.team-name {
+  font-size:clamp(18px,4vw,36px);
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.score {
+  display:flex;
+  gap:16px;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(45px,9vw,85px);
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+}
+.score span {transition:transform .25s}
+.score .changed {animation:pop .45s}
+@keyframes pop {
+  50% {transform:scale(1.3);color:#ff4545}
+}
+.center {text-align:center;min-width:100px}
+.clock {
+  font-size:25px;
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+}
+.period {
+  margin-top:8px;
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:5px;
+  background:var(--red);
+  font-size:11px;
+  font-weight:900;
+}
+.bottom {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 15px;
+  background:#ffffff12;
+  font-size:11px;
+  letter-spacing:1px;
+}
+.dot {
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#ff3333;
+  margin-right:6px;
+  animation:blink 1s infinite;
+}
+@keyframes blink {50%{opacity:.2}}
+.events {
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  flex-wrap:wrap;
+  padding:10px;
+  font-size:12px;
+  color:#ddd;
+}
+#admin {
+  max-width:760px;
+  margin:25px auto;
+  padding:20px;
+  border-radius:12px;
+  background:white;
+  color:#171717;
+}
+#admin h2 {margin-top:0}
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+label {font-size:12px;font-weight:bold}
+input,select,button {
+  width:100%;
+  padding:11px;
+  margin-top:5px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font:inherit;
+}
+button {
+  background:var(--red);
+  color:white;
+  border:0;
+  font-weight:bold;
+  cursor:pointer;
+}
+button.dark {background:#242630}
+.buttons {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
+  margin-top:12px;
+}
+.hidden {display:none!important}
+#message {font-size:13px;color:#555;margin-top:10px}
+@media(max-width:500px) {
+  .match {gap:5px;padding:18px 6px}
+  .center {min-width:75px}
+  .score {gap:7px}
+  .grid {grid-template-columns:1fr 1fr}
+}
+body.overlay #admin {display:none}
+body.overlay #overlay {margin:0;width:100%;border-radius:10px}
+</style>
 </head>
 <body>
 
-    <div class="dashboard-grid">
-        
-        <!-- Scoreboard Panel -->
-        <div class="card full-width scoreboard">
-            <div class="team-node">
-                <div class="team-title" id="t1Name">HOME</div>
-                <div style="font-size:0.8rem; color:var(--accent-blue); font-weight:700;">Home Team</div>
-            </div>
-            
-            <div style="text-align: center;">
-                <div class="live-indicator" id="liveIndicator">
-                    <div class="live-dot" id="liveDot"></div>
-                    <span id="liveStatusText">LIVE</span>
-                </div>
-                <div class="score-box">
-                    <span id="t1Score">0</span><span>-</span><span id="t2Score">0</span>
-                </div>
-                <div class="clock-display" id="clock">00:00</div>
-            </div>
+<div id="overlay">
+  <div class="brand">
+    <div class="shield">AF</div>
+    ARSENAL FANS LIVE
+  </div>
+  <div class="competition" id="competition">INDEPENDENT FAN WATCH-ALONG</div>
+  <div class="match">
+    <div class="team">
+      <div class="team-name" id="home">ARSENAL</div>
+      <small>HOME</small>
+    </div>
+    <div class="center">
+      <div class="score">
+        <span id="hs">0</span>
+        <span>:</span>
+        <span id="as">0</span>
+      </div>
+      <div class="clock" id="clock">00:00</div>
+      <div class="period" id="period">PRE-MATCH</div>
+    </div>
+    <div class="team">
+      <div class="team-name" id="away">OPPONENT</div>
+      <small>AWAY</small>
+    </div>
+  </div>
+  <div class="events" id="events">MATCHDAY</div>
+  <div class="bottom">
+    <span><i class="dot"></i><span id="status">WATCH-ALONG</span></span>
+    <span>ARSENAL FANS LIVE</span>
+  </div>
+</div>
 
-            <div class="team-node">
-                <div class="team-title" id="t2Name">AWAY</div>
-                <div style="font-size:0.8rem; color:var(--accent-green); font-weight:700;">Away Team</div>
-            </div>
-        </div>
+<div id="admin">
+  <h2>⚽ Match control dashboard</h2>
+  <div id="login">
+    <p>Administrator login</p>
+    <input id="email" type="email" placeholder="Admin email">
+    <input id="password" type="password" placeholder="Password">
+    <button id="loginBtn">LOGIN</button>
+  </div>
 
-        <!-- Live Statistics Comparison Display -->
-        <div class="card">
-            <div class="panel-heading">Live Dynamic Statistics</div>
-            
-            <!-- Possession Metric -->
-            <div class="stat-row">
-                <div class="stat-labels">
-                    <span id="v1Poss">50%</span><span>Ball Possession</span><span id="v2Poss">50%</span>
-                </div>
-                <div class="stat-bar-container">
-                    <div class="stat-bar-left" id="barPoss" style="width: 50%;"></div>
-                    <div class="stat-bar-right" id="barPoss2" style="width: 50%;"></div>
-                </div>
-            </div>
+  <div id="controls" class="hidden">
+    <div class="grid">
+      <label>Competition
+        <input id="compInput" value="INDEPENDENT FAN WATCH-ALONG">
+      </label>
+      <label>Match status
+        <select id="periodInput">
+          <option>PRE-MATCH</option>
+          <option>1ST HALF</option>
+          <option>HALF-TIME</option>
+          <option>2ND HALF</option>
+          <option>EXTRA TIME</option>
+          <option>FULL-TIME</option>
+          <option>PENALTIES</option>
+        </select>
+      </label>
+      <label>Home team
+        <input id="homeInput" value="ARSENAL">
+      </label>
+      <label>Away team
+        <input id="awayInput" value="OPPONENT">
+      </label>
+      <label>Goal scorer
+        <input id="scorer" placeholder="Player name">
+      </label>
+      <label>Manual added time
+        <input id="added" placeholder="e.g. +5">
+      </label>
+    </div>
 
-            <!-- Shots on Target Metric -->
-            <div class="stat-row">
-                <div class="stat-labels">
-                    <span id="v1Shots">0</span><span>Shots (On Target)</span><span id="v2Shots">0</span>
-                </div>
-                <div class="stat-bar-container">
-                    <div class="stat-bar-left" id="barShots" style="width: 50%;"></div>
-                    <div class="stat-bar-right" id="barShots2" style="width: 50%;"></div>
-                </div>
-            </div>
+    <div class="buttons">
+      <button id="homeGoal">HOME GOAL +1</button>
+      <button id="awayGoal">AWAY GOAL +1</button>
+      <button id="yellow">YELLOW CARD</button>
+      <button id="red">RED CARD</button>
+      <button id="start">START TIMER</button>
+      <button class="dark" id="pause">PAUSE TIMER</button>
+      <button class="dark" id="reset">RESET TIMER</button>
+      <button class="dark" id="undo">UNDO LAST GOAL</button>
+      <button id="save">SAVE TEAM / MATCH INFO</button>
+      <button class="dark" id="logout">LOG OUT</button>
+    </div>
+    <p id="message">Connect your Firebase project to control the scoreboard.</p>
+  </div>
+</div>
 
-            <!-- Passing Ratios -->
-            <div class="stat-row">
-                <div class="stat-labels">
-                    <span id="v1Pass">0/0</span><span>Pass Accuracy</span><span id="v2Pass">0/0</span>
-                </div>
-                <div class="stat-bar-container">
-                    <div class="stat-bar-left" id="barPass" style="width: 50%;"></div>
-                    <div class="stat-bar-right" id="barPass2" style="width: 50%;"></div>
-                </div>
-            </div>
+<script type="module">
+import { initializeApp } from
+ "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-            <!-- Fouls & Disciplinary Metric -->
-            <div class="stat-row">
-                <div class="stat-labels">
-                    <span id="v1Fouls">0</span><span>Fouls Committed</span><span id="v2Fouls">0</span>
-                </div>
-                <div class="stat-bar-container">
-                    <div class="stat-bar-left" id="barFouls" style="width: 50%;"></div>
-                    <div class="stat-bar-right" id="barFouls2" style="width: 50%;"></div>
-                </div>
-            </div>
+import {
+ getAuth, signInWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-            <div class="panel-heading" style="margin-top:24px;">Live Match Feed</div>
-            <div class="event-log" id="eventLog">
-                <div class="event-item"><span class="event-time">00:00</span>Match configuration generated cleanly. Ready to start.</div>
-            </div>
-        </div>
+import {
+ getDatabase, ref, onValue, update, get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        <!-- System Operator Panel -->
-        <div class="card">
-            <div class="panel-heading">Operator Real-time Controller</div>
-            
+// 1. PUT YOUR FIREBASE CONFIGURATION HERE
+const firebaseConfig = {
+ apiKey: "YOUR_API_KEY",
+ authDomain: "YOUR_PROJECT.firebaseapp.com",
+ databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+ projectId: "YOUR_PROJECT",
+ appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const matchRef = ref(db,"matches/arsenalfans");
+
+const $ = id => document.getElementById(id);
+const overlayMode =
+ new URLSearchParams(location.search).get("overlay")==="1";
+
+if(overlayMode) document.body.classList.add("overlay");
+
+let state = {
+ home:"ARSENAL", away:"OPPONENT",
+ hs:0, as:0,
+ competition:"INDEPENDENT FAN WATCH-ALONG",
+ period:"PRE-MATCH",
+ elapsed:0, startedAt:null,
+ added:"", events:[]
+};
+
+function currentElapsed(s) {
+ if(s.startedAt)
+  return (s.elapsed||0)+Math.max(0,Math.floor((Date.now()-s.startedAt)/1000));
+ return s.elapsed||0;
+}
+
+function timeString(seconds) {
+ const m=Math.floor(seconds/60);
+ const sec=seconds%60;
+ return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+}
+
+function render(s) {
+ $("home").textContent=s.home;
+ $("away").textContent=s.away;
+ $("competition").textContent=s.competition;
+ $("hs").textContent=s.hs;
+ $("as").textContent=s.as;
+ $("clock").textContent=timeString(currentElapsed(s))+
+   (s.added ? " "+s.added : "");
+ $("period").textContent=s.period;
+ $("status").textContent=s.startedAt?"LIVE WATCH-ALONG":"WATCH-ALONG";
+ $("events").textContent=(s.events||[]).slice(-4)
+  .map(e=>e.icon+" "+e.text).join("  •  ") || "MATCHDAY";
+}
+
+function say(message) {
+ $("message").textContent=message;
+}
+
+async function change(values) {
+ if(!auth.currentUser) return say("Please log in first.");
+ try {
+  await update(matchRef,values);
+  say("Scoreboard updated successfully.");
+ } catch(e) {
+  say("Update error: "+e.message);
+ }
+}
+
+onValue(matchRef,snapshot=>{
+ if(snapshot.exists()) {
+  state=snapshot.val();
+  render(state);
+ }
+});
+
+setInterval(()=>render(state),500);
+
+$("loginBtn").onclick=async()=>{
+ try {
+  await signInWithEmailAndPassword(
+   auth,$("email").value,$("password").value
+  );
+  $("login").classList.add("hidden");
+  $("controls").classList.remove("hidden");
+  say("Administrator connected.");
+ } catch(e) {
+  say("Login failed: "+e.message);
+ }
+};
+
+$("logout").onclick=async()=>{
+ await signOut(auth);
+ $("controls").classList.add("hidden");
+ $("login").classList.remove("hidden");
+};
+
+$("save").onclick=()=>change({
+ home:$("homeInput").value.toUpperCase(),
+ away:$("awayInput").value.toUpperCase(),
+ competition:$("compInput").value.toUpperCase(),
+ period:$("periodInput").value,
+ added:$("added").value
+});
+
+async function goal(team) {
+ const s=state;
+ const scorer=$("scorer").value.trim()||"Unknown scorer";
+ const event={icon:"⚽",text:scorer+" ("+
+  timeString(currentElapsed(s))+")"};
+ const events=[...(s.events||[]),event].slice(-12);
+ await change({
+  [team]: (team==="hs" ? s.hs : s.as)+1,
+  events
+ });
+ $("scorer").value="";
+}
+
+$("homeGoal").onclick=()=>goal("hs");
+$("awayGoal").onclick=()=>goal("as");
+
+async function card(icon,label) {
+ const player=$("scorer").value.trim()||"Player";
+ await change({
+  events:[...(state.events||[]),
+   {icon,text:label+": "+player}].slice(-12)
+ });
+}
+
+$("yellow").onclick=()=>card("🟨","Yellow card");
+$("red").onclick=()=>card("🟥","Red card");
+
+$("start").onclick=()=>change({
+ period:state.period==="PRE-MATCH"?"1ST HALF":state.period,
+ startedAt:Date.now()
+});
+
+$("pause").onclick=()=>change({
+ elapsed:currentElapsed(state),
+ startedAt:null
+});
+
+$("reset").onclick=()=>change({
+ elapsed:0,startedAt:null,period:"PRE-MATCH"
+});
+
+$("undo").onclick=async()=>{
+ const s=state;
+ const events=[...(s.events||[])];
+ const last=events.pop();
+ if(!last || last.icon!=="⚽")
+  return say("Last event is not a goal.");
+ // Goal events identify the scoring side by their stored team.
+ const side=last.team;
+ if(!side) return say("This event cannot be undone automatically.");
+ await change({
+  [side]:Math.max(0,s[side]-1),
+  events
+ });
+};
+
+</script>
+</body>
+</html>
